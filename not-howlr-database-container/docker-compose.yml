@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  not-howlr-database-container:
+    container_name: not-howlr-database-container
+    image: postgres
+    restart: unless-stopped
+    volumes:
+        - ./data/db:/var/lib/postgresql/data
+    env_file:
+        - database.env
+    ports:
+      - "6666:5432"
+    expose:
+      - 6666
+    networks:
+      - not-howlr-dev-network
+networks:
+  not-howlr-dev-network:
+    driver: bridge
