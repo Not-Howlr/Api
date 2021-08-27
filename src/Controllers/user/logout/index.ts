@@ -1,6 +1,5 @@
 import { FastifyInstance } from "fastify";
 
-import { Jwt } from "@Services/Jwt";
 import { Utility } from "@Services/Utility";
 
 export default async (fastify: FastifyInstance): Promise<void> => {
@@ -8,8 +7,8 @@ export default async (fastify: FastifyInstance): Promise<void> => {
 		preValidation: [fastify.authentication],
 		schema: {
 			tags: ["User"],
-			summary: "user refresh endpoint",
-			description: "user refresh endpoint",
+			summary: "user logout endpoint",
+			description: "user logout endpoint",
 			headers: {
 				type: "object",
 				required: ["cookie"],
@@ -21,30 +20,17 @@ export default async (fastify: FastifyInstance): Promise<void> => {
 				200: {
 					type: "object",
 					properties: {
-						ok: { type: "boolean" },
-						token: { type: "string" },
-						user: {
-							type: "object",
-							properties: {
-								uid: { type: "string" },
-								username: { type: "string" },
-								token_version: { type: "number" },
-								is_verified: { type: "boolean" }
-							}
-						}
+						ok: { type: "boolean" }
 					}
 				}
 			}
 		}
-	}, async (req, res) => {
+	}, async (_, res) => {
 		try {
 			res.statusCode = 200;
-			const token = Jwt.Sign(req.user);
-			Utility.SetCookie(res, token);
+			Utility.ClearCookie(res);
 			return {
-				ok: true,
-				token,
-				user: req.user
+				ok: true
 			};
 		} catch (error) {
 			throw new Error(error);

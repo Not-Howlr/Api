@@ -17,7 +17,6 @@ export class App {
 	private static async Setup(): Promise<void> {
 		App.instance.register(import("../Plugins/Request"));
 		App.instance.register(import("../Plugins/Authentication"));
-		App.instance.register(import("../Plugins/Decorators"));
 		App.instance.register(AutoLoad, {
 			dir: path.join(cwd(), "build/Middleware"),
 		});

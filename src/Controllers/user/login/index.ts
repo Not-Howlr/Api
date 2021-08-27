@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 
 import { ReuqestInstance } from "@Types/Override";
 import { Jwt } from "@Services/Jwt";
+import { Utility } from "@Services/Utility";
 
 const users = [
 	{ uid: "12345", token_version: 1, is_verified: false, username: "dev", password: "dev" },
@@ -11,7 +12,6 @@ const users = [
 
 export default async (fastify: FastifyInstance): Promise<void> => {
 	fastify.post<ReuqestInstance>("/", {
-		preValidation: [fastify.client],
 		schema: {
 			tags: ["User"],
 			summary: "user login endpoint",
@@ -41,9 +41,12 @@ export default async (fastify: FastifyInstance): Promise<void> => {
 			const found = users.find(a => a.username == username);
 			if (!found) throw "invalid username or password";
 			if (found.password !== password) throw "invalid username or password";
+
+			const token = Jwt.Sign(found);
+			Utility.SetCookie(res, token);
 			return {
 				ok: true,
-				token: Jwt.Sign(found)
+				token
 			};
 		} catch (error) {
 			throw new Error(error);

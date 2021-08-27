@@ -5,9 +5,7 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 
 declare module "fastify" {
 	export interface FastifyInstance {
-		developer(): void,
-		client(): void,
-		authentication(): void,
+		authentication(): void
 	}
 
 	export interface FastifyRequest {

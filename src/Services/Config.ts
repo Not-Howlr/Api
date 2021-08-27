@@ -9,11 +9,9 @@ export class Config {
 	}
 
 	public static readonly Secrets = {
-		APPCODE: <string>process.env.APPCODE,
-		DEV_SUBSCRIPTION: <string>process.env.DEV_SUBSCRIPTION,
-		CLIENT_SUBSCRIPTION: <string>process.env.CLIENT_SUBSCRIPTION,
 		JWT_SECRET: <string>process.env.JWT_SECRET,
 		JWT_EXPIRATION: <number>parseInt(process.env.JWT_EXPIRATION as string),
+		COOKIE_SECRET: <string>process.env.COOKIE_SECRET
 	}
 
 	public static readonly Db = {

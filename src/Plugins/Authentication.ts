@@ -6,10 +6,10 @@ import { Jwt } from "@Services/Jwt";
 export default plugin(async (fastify: FastifyInstance): Promise<void> => {
 	fastify.decorate("authentication", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
-			const auth = request.headers.authorization;
+			const auth = request.headers.cookie;
 			if (!auth) throw "missing auth";
 
-			const token = auth.split(" ")[1];
+			const token = auth.split("=")[1];
 			if (!token) throw "missing token";
 
 			const user = Jwt.Verify(token);
