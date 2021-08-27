@@ -38,7 +38,7 @@ export class App {
 		try {
 			await Database.Connect();
 			await App.Setup();
-			await App.instance.listen(Options.PORT, Options.IS_PROD ? "0.0.0.0" : "127.0.0.1");
+			await App.instance.listen(Options.PORT, Options.IS_PROD ? "0.0.0.0" : Options.HOST);
 		} catch (e) {
 			Log.Error(e, e.stack || e.stackTrace, "Application Error");
 			await App.instance.close();

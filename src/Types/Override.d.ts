@@ -17,6 +17,11 @@ interface IQuery {
 	limit: number
 }
 
+interface IBody {
+	username: string,
+	password: string
+}
+
 interface IParams {
 	page: number,
 	id: number,
@@ -24,6 +29,7 @@ interface IParams {
 }
 
 export interface ReuqestInstance extends FastifyRequest {
+	Body: IBody,
 	Querystring: IQuery,
 	Params: IParams
 }
