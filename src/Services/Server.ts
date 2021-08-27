@@ -1,11 +1,12 @@
+
 import path from "path";
+import { cwd } from "process";
 import fastify, { FastifyError } from "fastify";
 import AutoLoad from "fastify-autoload";
 
 import { Config } from "./Config";
 import { Database } from "./Database";
 import { Log } from "./Logger";
-import { cwd } from "process";
 
 const { Options } = Config;
 
@@ -15,6 +16,7 @@ export class App {
 
 	private static async Setup(): Promise<void> {
 		App.instance.register(import("../Plugins/Request"));
+		App.instance.register(import("../Plugins/Authentication"));
 		App.instance.register(import("../Plugins/Decorators"));
 		App.instance.register(AutoLoad, {
 			dir: path.join(cwd(), "build/Middleware"),

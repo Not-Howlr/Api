@@ -26,6 +26,7 @@
     "@types/axios": "^0.14.0",
     "@types/dotenv": "^8.2.0",
     "@types/ioredis": "^4.26.6",
+    "@types/jsonwebtoken": "^8.5.5",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^16.4.7",
     "@types/redis": "^2.8.31",
@@ -38,6 +39,7 @@
   "dependencies": {
     "@mikro-orm/core": "^4.5.7",
     "@mikro-orm/postgresql": "^4.5.7",
+    "@not-howlr/types": "github:Not-Howlr/Types",
     "argon2": "^0.28.2",
     "axios": "^0.21.1",
     "class-transformer": "^0.4.0",
@@ -50,6 +52,7 @@
     "fastify-sensible": "^3.1.1",
     "fastify-swagger": "^4.8.3",
     "ioredis": "^4.27.7",
+    "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
     "pg": "^8.7.1",
     "redis": "^3.1.2",

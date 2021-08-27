@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IDatabaseDriver, Connection, EntityManager, EntityRepository } from "@mikro-orm/core";
+import { IUser } from "@not-howlr/types";
 import { FastifyInstance, FastifyRequest } from "fastify";
 
 declare module "fastify" {
 	export interface FastifyInstance {
-		developer(): void;
-		client(): void;
+		developer(): void,
+		client(): void,
+		authentication(): void,
 	}
 
 	export interface FastifyRequest {
-		em: EntityManager<IDatabaseDriver<Connection>>
+		em: EntityManager<IDatabaseDriver<Connection>>,
+		user: IUser
 	}
 }
 

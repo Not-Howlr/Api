@@ -4,7 +4,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { Config } from "@Services/Config";
 import { Database } from "@Services/Database";
 
-const { Options } = Config;
+const { Secrets } = Config;
 
 export default plugin(async (fastify: FastifyInstance): Promise<void> => {
 	fastify.addHook("onRequest", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -15,7 +15,7 @@ export default plugin(async (fastify: FastifyInstance): Promise<void> => {
 			throw new Error("missing authorization");
 		}
 
-		if (appcode != Options.APPCODE) {
+		if (appcode != Secrets.APPCODE) {
 			reply.statusCode = 401;
 			throw new Error("unautorized");
 		}

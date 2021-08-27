@@ -1,11 +1,12 @@
 import { FastifyInstance } from "fastify";
 
 import { ReuqestInstance } from "@Types/Override";
+import { Jwt } from "@Services/Jwt";
 
 const users = [
-	{ username: "dev", password: "dev" },
-	{ username: "", password: "" },
-	{ username: "", password: "" }
+	{ uid: "12345", token_version: 1, is_verified: false, username: "dev", password: "dev" },
+	{ uid: "6789", token_version: 1, is_verified: false, username: "judeboy", password: "1234" },
+	{ uid: "6969", token_version: 1, is_verified: false, username: "badonn", password: "yiff" }
 ];
 
 export default async (fastify: FastifyInstance): Promise<void> => {
@@ -22,19 +23,13 @@ export default async (fastify: FastifyInstance): Promise<void> => {
 					username: { type: "string" },
 					password: { type: "string" }
 				}
-
 			},
 			response: {
 				200: {
 					type: "object",
 					properties: {
 						ok: { type: "boolean" },
-						user: {
-							type: "object",
-							properties: {
-								username: { type: "string" }
-							}
-						}
+						token: { type: "string" }
 					}
 				}
 			}
@@ -43,13 +38,12 @@ export default async (fastify: FastifyInstance): Promise<void> => {
 		try {
 			res.statusCode = 200;
 			const { username, password } = req.body;
-			console.log(username, password);
 			const found = users.find(a => a.username == username);
-			if (!found) throw "username not found";
-			if (found.password !== password) throw "incorrect password";
+			if (!found) throw "invalid username or password";
+			if (found.password !== password) throw "invalid username or password";
 			return {
 				ok: true,
-				user: found
+				token: Jwt.Sign(found)
 			};
 		} catch (error) {
 			throw new Error(error);
