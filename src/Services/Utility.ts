@@ -23,7 +23,6 @@ export class Utility {
 				httpOnly: true,
 				path: "/",
 				// maxAge: 60 * 60 * 24, // 1 day
-				maxAge: 60 / 2,
 				secure: Config.Options.IS_PROD,
 				signed: false,
 				sameSite: true

@@ -5,20 +5,20 @@ import { Utility } from "@Services/Utility";
 export abstract class Base {
 
 	@PrimaryKey({ hidden: true })
-	id?: number;
+	id!: number;
 
 	@Index()
 	@Property()
-	uid: string;
+	uid!: string;
 
 	@Property({ hidden: true })
-	createdAt?: Date = new Date();
+	createdAt: Date = new Date();
 
 	@Property({ onUpdate: () => new Date(), hidden: true })
-	updatedAt?: Date = new Date();
+	updatedAt: Date = new Date();
 
 	@Property({ default: false, hidden: true })
-	deleted: boolean;
+	deleted = false;
 
 	@BeforeCreate()
 	public CreateUid(): void {

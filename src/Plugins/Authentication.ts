@@ -2,6 +2,8 @@ import plugin from "fastify-plugin";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import { Jwt } from "@Services/Jwt";
+import { ProfileRepository } from "@Repositories/Profile/Profile";
+import { Profile } from "@Models/Profile/Profile";
 
 export default plugin(async (fastify: FastifyInstance): Promise<void> => {
 	fastify.decorate("authentication", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -12,11 +14,13 @@ export default plugin(async (fastify: FastifyInstance): Promise<void> => {
 			const token = auth.split("=")[1];
 			if (!token) throw "missing token";
 
-			const user = Jwt.Verify(token);
-			if (!user.uid) throw "user not found";
-			// const user = await User.FindByUid(deserialized.uid as string);
+			const deserialized = Jwt.Verify(token);
 
-			// if (user.tokenVersion !== deserialized.tokenVersion) throw "invalid token version";
+			const manager = request.em.getRepository(Profile);
+
+			const user = await ProfileRepository.FindByUid(manager, deserialized.uid);
+
+			if (user.token_version !== deserialized.token_version) throw "invalid token version";
 
 			request.user = user;
 		} catch (error) {

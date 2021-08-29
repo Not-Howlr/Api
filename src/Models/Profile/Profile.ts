@@ -6,6 +6,11 @@ import { Password } from "@Services/Password";
 @Entity()
 export class Profile extends Base {
 
+	constructor(params: Partial<Profile>) {
+		super();
+		Object.assign(this, params);
+	}
+
 	@Index()
 	@Property({ unique: true })
 	username: string;
@@ -17,10 +22,10 @@ export class Profile extends Base {
 	password: string;
 
 	@Property({ default: 0 })
-	token_version: number;
+	token_version = 0;
 
 	@Property({ default: false, hidden: true })
-	is_verified: boolean;
+	is_verified = false;
 
 	@BeforeCreate()
 	public async HashPassword(): Promise<void> {

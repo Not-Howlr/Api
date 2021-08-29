@@ -10,14 +10,15 @@ export default async (fastify: FastifyInstance): Promise<void> => {
 	fastify.post<ReuqestInstance>("/", {
 		schema: {
 			tags: ["User"],
-			summary: "user login endpoint",
-			description: "user login endpoint",
+			summary: "user register endpoint",
+			description: "user register endpoint",
 			body: {
 				type: "object",
-				required: ["username", "password"],
+				required: ["username", "password", "email"],
 				properties: {
 					username: { type: "string" },
-					password: { type: "string" }
+					password: { type: "string" },
+					email: { type: "string" },
 				}
 			},
 			response: {
@@ -42,9 +43,9 @@ export default async (fastify: FastifyInstance): Promise<void> => {
 	}, async (req, res) => {
 		try {
 			res.statusCode = 200;
-			const { username, password } = req.body;
+			const { username, password, email } = req.body;
 			const manager = req.em.getRepository(Profile);
-			const found = await ProfileRepository.Login(manager, { username, password });
+			const found = await ProfileRepository.Register(manager, { username, password, email });
 			const token = Jwt.Sign(found);
 			Utility.SetCookie(res, token);
 			return {
