@@ -24,7 +24,7 @@ export class Profile extends Base {
 	@Property({ default: 0 })
 	token_version = 0;
 
-	@Property({ default: false, hidden: true })
+	@Property({ default: false })
 	is_verified = false;
 
 	@BeforeCreate()
