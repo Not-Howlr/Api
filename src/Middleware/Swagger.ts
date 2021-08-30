@@ -20,7 +20,6 @@ export default plugin(async (fastify: FastifyInstance): Promise<void> => {
 			consumes: ["application/json"],
 			produces: ["application/json"],
 			tags: [
-				{ name: "Dev", description: "Dev Related Endpoints (private)" },
 				{ name: "User", description: "User Related Endpoints (public)" }
 			]
 		},
