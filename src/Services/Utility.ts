@@ -46,4 +46,15 @@ export class Utility {
 			throw new Error(error);
 		}
 	}
+
+	public static GetDiffInMs(now: Date, target: Date): number {
+		const _now = new Date(now).getTime();
+		const _target = new Date(target).getTime();
+		return (_now - _target);
+	}
+
+	public static GetDiffInMin(now: Date, target: Date): number {
+		const diff = Utility.GetDiffInMs(now, target);
+		return Math.round(((diff % 86400000) % 3600000) / 60000);
+	}
 }

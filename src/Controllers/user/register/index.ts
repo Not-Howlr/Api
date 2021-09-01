@@ -45,13 +45,13 @@ export default async (fastify: FastifyInstance): Promise<void> => {
 			res.statusCode = 200;
 			const { username, password, email } = req.body;
 			const manager = req.em.getRepository(Profile);
-			const found = await ProfileRepository.Register(manager, { username, password, email });
-			const token = Jwt.Sign(found);
+			const inserted = await ProfileRepository.Register(manager, { username, password, email });
+			const token = Jwt.Sign(inserted);
 			Utility.SetCookie(res, token);
 			return {
 				ok: true,
 				token,
-				user: found
+				user: inserted.toJSON()
 			};
 		} catch (error) {
 			throw new Error(error);

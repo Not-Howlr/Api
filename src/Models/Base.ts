@@ -8,16 +8,16 @@ export abstract class Base {
 	id!: number;
 
 	@Index()
-	@Property()
+	@Property({ type: String })
 	uid!: string;
 
-	@Property({ hidden: true })
+	@Property({ type: Date, hidden: true })
 	createdAt: Date = new Date();
 
-	@Property({ onUpdate: () => new Date(), hidden: true })
+	@Property({ onUpdate: () => new Date(), type: Date, hidden: true })
 	updatedAt: Date = new Date();
 
-	@Property({ default: false, hidden: true })
+	@Property({ type: Boolean, default: false, hidden: true })
 	deleted = false;
 
 	@BeforeCreate()

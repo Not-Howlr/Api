@@ -1,7 +1,7 @@
-import { BeforeCreate, Dictionary, Entity, Index, Property, wrap } from "@mikro-orm/core";
+import { Dictionary, Entity, Index, OneToOne, Property, wrap } from "@mikro-orm/core";
 
 import { Base } from "@Models/Base";
-import { Password } from "@Services/Password";
+import { UserPassword } from "./UserPassword";
 
 @Entity()
 export class Profile extends Base {
@@ -12,25 +12,20 @@ export class Profile extends Base {
 	}
 
 	@Index()
-	@Property({ unique: true })
+	@Property({ type: String, unique: true })
 	username: string;
 
-	@Property({ unique: true })
+	@Property({ type: String, unique: true })
 	email: string;
 
-	@Property({ hidden: true })
-	password: string;
+	@OneToOne({ type: UserPassword, owner: true, eager: true, orphanRemoval: true, hidden: true })
+	password: UserPassword;
 
-	@Property({ default: 0 })
+	@Property({ type: Number, default: 0 })
 	token_version = 0;
 
-	@Property({ default: false })
+	@Property({ type: Boolean, default: false })
 	is_verified = false;
-
-	@BeforeCreate()
-	public async HashPassword(): Promise<void> {
-		this.password = await Password.Hash(this.password);
-	}
 
 	public toJSON(): Dictionary<Profile> {
 		return wrap(this).toObject();

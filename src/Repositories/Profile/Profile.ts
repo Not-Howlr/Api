@@ -1,7 +1,9 @@
 import { EntityRepository } from "@mikro-orm/core";
+import { UserPassword } from "@Models/Profile/UserPassword";
 
 import { Profile } from "@Models/Profile/Profile";
 import { Password } from "@Services/Password";
+import { Utility } from "@Services/Utility";
 
 export interface ILogin {
 	username: string,
@@ -46,7 +48,7 @@ export class ProfileRepository {
 			const newProfile = new Profile({
 				username: login.username,
 				email: login.email,
-				password: login.password
+				password: new UserPassword({ hash: login.password })
 			});
 			manager.persistAndFlush(newProfile);
 			return newProfile;
@@ -60,8 +62,25 @@ export class ProfileRepository {
 			const exists = await manager.findOne({ username: login.username });
 			if (!exists) throw "username not found";
 
-			const match = await Password.Compare(login.password, exists.password);
-			if (!match) throw "incorrect password";
+			const diff = exists.password.cooldown && Utility.GetDiffInMin(new Date(), exists.password.cooldown);
+			if (diff && diff < 10) throw "please try again later";
+
+			const match = await Password.Compare(login.password, exists.password.hash);
+			if (!match) {
+				if (exists.password.login_attempts >= 10) {
+					exists.password.cooldown = new Date();
+					await manager.persistAndFlush(exists);
+					throw "too many failed attempts. please try again later";
+				}
+				exists.password.login_attempts += 1;
+				await manager.persistAndFlush(exists);
+				throw "incorrect password";
+			}
+			if (exists.password.login_attempts > 0) {
+				exists.password.login_attempts = 0;
+				exists.password.cooldown = null;
+				await manager.persistAndFlush(exists);
+			}
 			return exists;
 		} catch (error) {
 			throw new Error(error);

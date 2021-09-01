@@ -9,9 +9,13 @@ export class Config {
 	}
 
 	public static readonly Secrets = {
-		JWT_SECRET: <string>process.env.JWT_SECRET,
+		PEPPER: <string>process.env.PEPPER,
 		JWT_EXPIRATION: <number>parseInt(process.env.JWT_EXPIRATION as string),
-		COOKIE_SECRET: <string>process.env.COOKIE_SECRET
+		COOKIE_SECRET: <string>process.env.COOKIE_SECRET,
+		PUBLIC_KEY: <string>process.env.PUBLIC_KEY?.replace(/_NEWLINE_/g, "\n"),
+		PRIVATE_KEY: <string>process.env.PRIVATE_KEY?.replace(/_NEWLINE_/g, "\n"),
+		ENCRYPTION_KEY: <Buffer>Buffer.from(process.env.ENCRYPTION_KEY as string),
+		ENCRYPTION_IV: <Buffer>Buffer.from(process.env.ENCRYPTION_IV as string)
 	}
 
 	public static readonly Db = {

@@ -50,7 +50,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
 			return {
 				ok: true,
 				token,
-				user: found
+				user: found.toJSON()
 			};
 		} catch (error) {
 			throw new Error(error);
