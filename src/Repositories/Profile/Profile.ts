@@ -50,8 +50,13 @@ export class ProfileRepository {
 				email: login.email,
 				password: new UserPassword({ hash: login.password })
 			});
-			manager.persistAndFlush(newProfile);
-			return newProfile;
+			await manager.persistAndFlush(newProfile);
+			return await manager.findOneOrFail({
+				$and: [
+					{ email: login.email },
+					{ username: login.username },
+				]
+			});
 		} catch (error) {
 			throw new Error(error);
 		}
