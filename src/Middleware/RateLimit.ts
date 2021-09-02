@@ -7,9 +7,9 @@ import { Config } from "@Services/Config";
 export default plugin(async (fastify: FastifyInstance): Promise<void> => {
 	fastify.register(rateLimit, {
 		global: true,
-		max: 1000,
+		max: 500,
 		timeWindow: "1 minute",
-		allowList: ["127.0.0.1"],
+		allowList: ["127.0.0.1", "192.168.1.3"],
 		addHeaders: {
 			"x-ratelimit-limit": !Config.Options.IS_PROD,
 			"x-ratelimit-remaining": !Config.Options.IS_PROD,
