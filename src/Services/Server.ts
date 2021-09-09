@@ -3,10 +3,13 @@ import path from "path";
 import { cwd } from "process";
 import fastify, { FastifyError } from "fastify";
 import AutoLoad from "fastify-autoload";
+import { ServerHandler, INewMessage } from "@not-howlr/types";
+import { Socket } from "socket.io";
 
 import { Config } from "./Config";
 import { Database } from "./Database";
 import { Log } from "./Logger";
+import { Handler } from "./Websocket";
 
 const { Options } = Config;
 
@@ -40,11 +43,16 @@ export class App {
 			await Database.Connect();
 			await App.Setup();
 			await App.instance.listen(Options.PORT, Options.IS_PROD ? "0.0.0.0" : Options.HOST);
+			try {
+				App.instance.io.on(ServerHandler.CONNECTION, async (socket: Socket) => {
+					await Handler.Connect(socket);
+					socket.on(ServerHandler.SEND_MESSAGE, async (data: INewMessage) => await Handler.SendMessage(socket, data));
+				});
+			} catch (error) {
+				Log.Error(error, error.stack || error.stackTrace, "Websocket Service");
+			}
 		} catch (e) {
 			Log.Error(e, e.stack || e.stackTrace, "Application Error");
-			await App.instance.close();
-			await Database.Close();
-			process.exit(1);
 		}
 	}
 }

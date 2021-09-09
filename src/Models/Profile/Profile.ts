@@ -1,6 +1,7 @@
-import { Dictionary, Entity, Index, OneToOne, Property, wrap } from "@mikro-orm/core";
+import { Dictionary, Collection, Entity, Index, OneToOne, Property, wrap, ManyToMany } from "@mikro-orm/core";
 
 import { Base } from "@Models/Base";
+import { ChatRoom } from "@Models/Messages/ChatRoom";
 import { UserPassword } from "./UserPassword";
 
 @Entity()
@@ -26,6 +27,9 @@ export class Profile extends Base {
 
 	@Property({ type: Boolean, default: false })
 	is_verified = false;
+
+	@ManyToMany({ entity: () => ChatRoom, nullable: true, owner: true, eager: true })
+	chat_rooms = new Collection<ChatRoom>(this);
 
 	public toJSON(): Dictionary<Profile> {
 		return wrap(this).toObject();

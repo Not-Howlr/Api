@@ -1,9 +1,10 @@
 import { EntityRepository } from "@mikro-orm/core";
-import { UserPassword } from "@Models/Profile/UserPassword";
 
+import { UserPassword } from "@Models/Profile/UserPassword";
 import { Profile } from "@Models/Profile/Profile";
 import { Password } from "@Services/Password";
 import { Utility } from "@Services/Utility";
+import { ChatRoom } from "@Models/Messages/ChatRoom";
 
 export interface ILogin {
 	username: string,
@@ -11,7 +12,21 @@ export interface ILogin {
 }
 export interface IRegister extends ILogin { email: string }
 
+interface IRoomResults {
+	room: {
+		updatedAt: Date,
+		name: string,
+		uid: string,
+		unread_messages: number
+	},
+	members: {
+		uid: string,
+		username: string
+	}[]
+}
+
 type RequestRepo = EntityRepository<Profile>;
+type ChatRequestRepo = EntityRepository<ChatRoom>;
 
 export class ProfileRepository {
 
@@ -87,6 +102,62 @@ export class ProfileRepository {
 				await manager.persistAndFlush(exists);
 			}
 			return exists;
+		} catch (error) {
+			throw new Error(error);
+		}
+	}
+
+	public static async CreateRoom(chatRepo: ChatRequestRepo, manager: RequestRepo, memberUids: string[], chatName?: string): Promise<ChatRoom> {
+		try {
+			const newRoom = new ChatRoom({
+				name: chatName
+			});
+			for (const uid of memberUids) {
+				const member = await manager.findOne({ uid });
+				if (!member) throw "user not found";
+				member.chat_rooms.add(newRoom);
+				newRoom.members.add(member);
+				manager.persist(member);
+				chatRepo.persist(newRoom);
+			}
+			await manager.flush();
+			await chatRepo.flush();
+			return newRoom;
+		} catch (error) {
+			throw new Error(error);
+		}
+	}
+
+	public static async GetRooms(manager: RequestRepo, uid: string, limit: number, pageNumber: number): Promise<IRoomResults[]> {
+		try {
+			const member = await manager.findOne({ uid });
+			if (!member) throw "user not found";
+			const rooms = await member.chat_rooms.matching({
+				limit,
+				offset: (pageNumber - 1) * limit,
+				orderBy: { updatedAt: "DESC" }
+			});
+			const _rooms = [];
+			for (const room of rooms) {
+				const _members = [];
+				const members = await room.members.loadItems();
+				for (const member of members) {
+					_members.push({
+						uid: member.uid,
+						username: member.username
+					});
+				}
+				_rooms.push({
+					room: {
+						updatedAt: room.updatedAt,
+						name: room.name ?? "",
+						uid: room.uid,
+						unread_messages: room.unread_messages
+					},
+					members: _members
+				});
+			}
+			return _rooms;
 		} catch (error) {
 			throw new Error(error);
 		}

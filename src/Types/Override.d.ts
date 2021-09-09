@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IDatabaseDriver, Connection, EntityManager, EntityRepository } from "@mikro-orm/core";
 import { IUser } from "@not-howlr/types";
+import { Server } from "socket.io";
 import { FastifyInstance, FastifyRequest } from "fastify";
 
 declare module "fastify" {
 	export interface FastifyInstance {
-		authentication(): void
+		authentication(): void,
+		io: Server
 	}
 
 	export interface FastifyRequest {
@@ -21,7 +23,10 @@ interface IQuery {
 interface IBody {
 	username: string,
 	email: string,
-	password: string
+	password: string,
+	uids: string[],
+	uid: string,
+	name: string
 }
 
 interface IParams {
